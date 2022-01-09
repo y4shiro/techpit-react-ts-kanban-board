@@ -1,5 +1,6 @@
 {
   "scripts": {},
-  "dependencies": {},
-  "devDependencies": {}
+  "devDependencies": {
+    "parcel": "^2.1.1"
+  }
 }
