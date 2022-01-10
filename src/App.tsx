@@ -1,5 +1,5 @@
 import React from 'react';
-import styled, { createGlobalStyle } from 'styled-components';
+import styled from 'styled-components';
 import * as color from './color';
 
 export const App: React.FC = () => {
@@ -128,18 +128,4 @@ const Card = styled.div`
   padding: 8px 32px;
   background-color: ${color.White};
   cursor: move;
-`;
-
-const GlobalStyle = createGlobalStyle`
-  html, body, #app {
-    height: 100%;
-  }
-
-  body {
-    /* https://css-tricks.com/snippets/css/system-font-stack/ */
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-      Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
-
-    overflow-wrap: break-word;
-  }
 `;
