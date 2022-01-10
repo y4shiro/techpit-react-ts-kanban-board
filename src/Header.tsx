@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import * as color from './color';
+import { CardFilter } from './CardFilter';
 
 type Props = {
   className?: string;
@@ -11,7 +12,7 @@ export const Header: React.FC<Props> = ({ className }) => {
     <Container className={className}>
       <Logo>Kanban board</Logo>
 
-      <CardFilter placeholder="Filter cards" />
+      <CardFilter />
     </Container>
   );
 };
@@ -28,12 +29,4 @@ const Logo = styled.div`
   color: ${color.Silver};
   font-size: 16px;
   font-weight: bold;
-`;
-
-const CardFilter = styled.input`
-  display: flex;
-  align-items: center;
-  min-width: 300px;
-  border: solid 1px ${color.Silver};
-  border-radius: 3px;
 `;
