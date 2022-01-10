@@ -2,14 +2,12 @@ import React from 'react';
 import styled from 'styled-components';
 import * as color from './color';
 
+import { Header as _Header } from './Header';
+
 export const App: React.FC = () => {
   return (
     <Container>
-      <Header>
-        <Logo>Kanban board</Logo>
-
-        <CardFilter placeholder="Filter cards" />
-      </Header>
+      <Header />
 
       <MainArea>
         <HorizontalScroll>
@@ -49,30 +47,8 @@ const Container = styled.div`
   height: 100%;
 `;
 
-const Header = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 8px 16px;
-  background-color: ${color.Navy};
+const Header = styled(_Header)`
   flex-shrink: 0;
-  color: ${color.Silver};
-  font-size: 16px;
-  font-weight: bold;
-`;
-
-const Logo = styled.div`
-  height: 100%;
-  padding: 16px 0;
-  overflow-y: auto;
-`;
-
-const CardFilter = styled.input`
-  display: flex;
-  align-items: center;
-  min-width: 300px;
-  border: solid 1px ${color.Silver};
-  border-radius: 3px;
 `;
 
 const MainArea = styled.div`
