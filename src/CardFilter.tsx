@@ -7,7 +7,7 @@ type Props = {
   className?: string;
 };
 
-export const CardFilter: React.FC<Props> = ({ className }) => {
+export const CardFilter: React.VFC<Props> = ({ className }) => {
   return (
     <Container>
       <SearchIcon />

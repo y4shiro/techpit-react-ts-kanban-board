@@ -7,7 +7,7 @@ type Props = {
   className?: string;
 };
 
-export const Header: React.FC<Props> = ({ className }) => {
+export const Header: React.VFC<Props> = ({ className }) => {
   return (
     <Container className={className}>
       <Logo>Kanban board</Logo>

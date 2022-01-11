@@ -4,7 +4,7 @@ import * as color from './color';
 
 import { Header as _Header } from './Header';
 
-export const App: React.FC = () => {
+export const App: React.VFC = () => {
   return (
     <Container>
       <Header />
