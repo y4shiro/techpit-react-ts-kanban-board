@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import * as color from './color';
 
 import { Header as _Header } from './Header';
 import { Column } from './Column';
@@ -20,7 +19,6 @@ export const App: React.VFC = () => {
               { id: 'c', text: '布団に入る (:3[___]' },
             ]}
           />
-
           <Column
             title="Doing"
             cards={[
@@ -28,9 +26,7 @@ export const App: React.VFC = () => {
               { id: 'e', text: '歯を磨く🦷' },
             ]}
           />
-
           <Column title="Waiting" cards={[]} />
-
           <Column
             title="Done"
             cards={[{ id: 'f', text: '布団から出る (:3っ)っ -=三[＿＿]' }]}
