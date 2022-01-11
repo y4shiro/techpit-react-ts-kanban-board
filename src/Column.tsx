@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import * as color from './color';
+import { Card } from './Card';
 import { PlusIcon } from './icon';
 
 type Props = {
@@ -25,7 +26,7 @@ export const Column: React.VFC<Props> = ({ title, cards }) => {
 
       <VerticalScroll>
         {cards.map(({ id, text }) => (
-          <div key={id}>{text}</div>
+          <Card key={id} text={text} />
         ))}
       </VerticalScroll>
     </Container>
