@@ -5,13 +5,23 @@ import { SearchIcon as _SearchIcon } from './icon';
 
 type Props = {
   className?: string;
+  value?: string;
+  onChange?: (value: string) => void;
 };
 
-export const CardFilter: React.VFC<Props> = ({ className }) => {
+export const CardFilter: React.VFC<Props> = ({
+  className,
+  value,
+  onChange,
+}) => {
   return (
     <Container>
       <SearchIcon />
-      <Input placeholder="Filter cards" />
+      <Input
+        placeholder="Filter cards"
+        value={value}
+        onChange={ev => onChange?.(ev.currentTarget.value)}
+      />
     </Container>
   );
 };
