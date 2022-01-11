@@ -2,6 +2,7 @@ import React, { useRef, useEffect } from 'react';
 import styled from 'styled-components';
 import * as color from './color';
 import { Button, ConfirmButton } from './Button';
+import { useAutoFitToContentHeight } from './hooks/useAutoFitToContentHeight';
 
 type Props = {
   value?: string;
@@ -82,19 +83,3 @@ const AddButton = styled(ConfirmButton).attrs({
 const CancelButton = styled(Button).attrs({
   children: 'Cancel',
 })``;
-
-// テキストエリアの高さを内容に応じて自動調整する
-const useAutoFitToContentHeight = (content: string | undefined) => {
-  const ref = useRef<HTMLTextAreaElement>(null);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-
-    const { borderTopWidth, borderBottomWidth } = getComputedStyle(el);
-    el.style.height = 'auto'; // 一度 auto に設定しないと高さが縮まなくなる
-    el.style.height = `calc(${borderTopWidth} + ${el.scrollHeight}px + ${borderBottomWidth})`;
-  }, [content]);
-
-  return ref;
-};
