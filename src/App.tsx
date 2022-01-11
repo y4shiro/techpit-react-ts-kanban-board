@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import * as color from './color';
 
 import { Header as _Header } from './Header';
+import { Column } from './Column';
 
 export const App: React.VFC = () => {
   return (
@@ -11,30 +12,29 @@ export const App: React.VFC = () => {
 
       <MainArea>
         <HorizontalScroll>
-          <Column>
-            <ColumnHeader>TODO</ColumnHeader>
+          <Column
+            title="TODO"
+            cards={[
+              { id: 'a', text: '朝食をとる🍞' },
+              { id: 'b', text: 'SNSをチェックする🐦' },
+              { id: 'c', text: '布団に入る (:3[___]' },
+            ]}
+          />
 
-            <Card>朝食をとる🍞</Card>
-            <Card>SNSをチェックする🐦</Card>
-            <Card>布団に入る (:3[___]</Card>
-          </Column>
+          <Column
+            title="Doing"
+            cards={[
+              { id: 'd', text: '顔を洗う👐' },
+              { id: 'e', text: '歯を磨く🦷' },
+            ]}
+          />
 
-          <Column>
-            <ColumnHeader>Doing</ColumnHeader>
+          <Column title="Waiting" cards={[]} />
 
-            <Card>顔を洗う👐</Card>
-            <Card>歯を磨く🦷</Card>
-          </Column>
-
-          <Column>
-            <ColumnHeader>Waiting</ColumnHeader>
-          </Column>
-
-          <Column>
-            <ColumnHeader>Done</ColumnHeader>
-
-            <Card>布団から出る (:3っ)っ -=三[＿＿]</Card>
-          </Column>
+          <Column
+            title="Done"
+            cards={[{ id: 'f', text: '布団から出る (:3っ)っ -=三[＿＿]' }]}
+          />
         </HorizontalScroll>
       </MainArea>
     </Container>
@@ -73,27 +73,6 @@ const HorizontalScroll = styled.div`
     flex: 0 0 16px;
     content: '';
   }
-`;
-
-const Column = styled.div`
-  display: flex;
-  flex-flow: column;
-  width: 355px;
-  height: 100%;
-  border: solid 1px ${color.Silver};
-  border-radius: 6px;
-  background-color: ${color.LightSilver};
-
-  > :not(:last-child) {
-    flex-shrink: 0;
-  }
-`;
-
-const ColumnHeader = styled.div`
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  padding: 8px;
 `;
 
 const Card = styled.div`
