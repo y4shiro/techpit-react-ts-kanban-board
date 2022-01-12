@@ -12,12 +12,16 @@ type Props = {
     id: string;
     text?: string;
   }[];
+  onCardDragStart?: (id: string) => void;
+  onCardDrop?: (entered: string | null) => void;
 };
 
 export const Column: React.VFC<Props> = ({
   title,
   filterValue: rawFilterValue,
   cards: rawCards,
+  onCardDragStart,
+  onCardDrop,
 }) => {
   const filterValue = rawFilterValue?.trim();
   const keywords = filterValue?.toLowerCase().split(/\s+/g) ?? [];
@@ -36,6 +40,11 @@ export const Column: React.VFC<Props> = ({
   const [draggingCardID, setDraggingCardID] = useState<string | undefined>(
     undefined,
   );
+
+  const handleCardDragStart = (id: string) => {
+    setDraggingCardID(id);
+    onCardDragStart?.(id);
+  };
 
   return (
     <Container>
@@ -65,10 +74,11 @@ export const Column: React.VFC<Props> = ({
               draggingCardID !== undefined &&
               (id === draggingCardID || cards[i - 1]?.id === draggingCardID)
             }
+            onDrop={() => onCardDrop?.(id)}
           >
             <Card
               text={text}
-              onDragStart={() => setDraggingCardID(id)}
+              onDragStart={() => handleCardDragStart(id)}
               onDragEnd={() => setDraggingCardID(undefined)}
             />
           </Card.DropArea>
@@ -80,6 +90,7 @@ export const Column: React.VFC<Props> = ({
             draggingCardID !== undefined &&
             cards[cards.length - 1]?.id === draggingCardID
           }
+          onDrop={() => onCardDrop?.(null)}
         />
       </VerticalScroll>
     </Container>
