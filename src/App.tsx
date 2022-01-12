@@ -84,6 +84,26 @@ export const App: React.VFC = () => {
     undefined,
   );
 
+  const deleteCard = () => {
+    const cardID = deletingCardID;
+    if (!cardID) return;
+
+    setDeletingCardID(undefined);
+
+    type Columns = typeof columns;
+    setColumns(
+      produce((columns: Columns) => {
+        const column = columns.find(col =>
+          col.cards.some(c => c.id === cardID),
+        );
+
+        if (!column) return;
+
+        column.cards = column.cards.filter(c => c.id !== cardID);
+      }),
+    );
+  };
+
   return (
     <Container>
       <Header filterValue={filterValue} onFilterChange={setFilterValue} />
@@ -107,7 +127,7 @@ export const App: React.VFC = () => {
       {deletingCardID && (
         <Overlay onClick={() => setDeletingCardID(undefined)}>
           <DeleteDialog
-            onConfirm={() => setDeletingCardID(undefined)}
+            onConfirm={deleteCard}
             onCancel={() => setDeletingCardID(undefined)}
           />
         </Overlay>
