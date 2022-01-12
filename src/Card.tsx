@@ -5,20 +5,24 @@ import { CheckIcon as _CheckIcon, TrashIcon } from './icon';
 
 type Props = {
   text?: string;
+  onDragStart?: () => void;
+  onDragEnd?: () => void;
 };
 
 export const Card: React.VFC<Props> & {
   DropArea: React.VFC<DropAreaProp>;
-} = ({ text }) => {
+} = ({ text, onDragStart, onDragEnd }) => {
   const [drag, setDrag] = useState(false);
 
   return (
     <Container
       style={{ opacity: drag ? 0.5 : undefined }}
       onDragStart={() => {
+        onDragStart?.();
         setDrag(true);
       }}
       onDragEnd={() => {
+        onDragEnd?.();
         setDrag(false);
       }}
     >
