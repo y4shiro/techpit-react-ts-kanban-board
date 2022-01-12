@@ -14,6 +14,7 @@ type Props = {
   }[];
   onCardDragStart?: (id: string) => void;
   onCardDrop?: (entered: string | null) => void;
+  onCardDeleteClick?: (id: string) => void;
 };
 
 export const Column: React.VFC<Props> = ({
@@ -22,6 +23,7 @@ export const Column: React.VFC<Props> = ({
   cards: rawCards,
   onCardDragStart,
   onCardDrop,
+  onCardDeleteClick,
 }) => {
   const filterValue = rawFilterValue?.trim();
   const keywords = filterValue?.toLowerCase().split(/\s+/g) ?? [];
@@ -80,6 +82,7 @@ export const Column: React.VFC<Props> = ({
               text={text}
               onDragStart={() => handleCardDragStart(id)}
               onDragEnd={() => setDraggingCardID(undefined)}
+              onDeleteClick={() => onCardDeleteClick?.(id)}
             />
           </Card.DropArea>
         ))}

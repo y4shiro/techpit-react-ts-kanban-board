@@ -7,11 +7,12 @@ type Props = {
   text?: string;
   onDragStart?: () => void;
   onDragEnd?: () => void;
+  onDeleteClick?: () => void;
 };
 
 export const Card: React.VFC<Props> & {
   DropArea: React.VFC<DropAreaProp>;
-} = ({ text, onDragStart, onDragEnd }) => {
+} = ({ text, onDragStart, onDragEnd, onDeleteClick }) => {
   const [drag, setDrag] = useState(false);
 
   return (
@@ -38,7 +39,7 @@ export const Card: React.VFC<Props> & {
         ),
       )}
 
-      <DeleteButton />
+      <DeleteButton onClick={onDeleteClick} />
     </Container>
   );
 };
