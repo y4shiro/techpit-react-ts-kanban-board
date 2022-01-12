@@ -15,6 +15,10 @@ type Props = {
   onCardDragStart?: (id: string) => void;
   onCardDrop?: (entered: string | null) => void;
   onCardDeleteClick?: (id: string) => void;
+  text?: string;
+  onTextChange?: (value: string) => void;
+  onTextConfirm?: () => void;
+  onTextCancel?: () => void;
 };
 
 export const Column: React.VFC<Props> = ({
@@ -24,6 +28,10 @@ export const Column: React.VFC<Props> = ({
   onCardDragStart,
   onCardDrop,
   onCardDeleteClick,
+  text,
+  onTextChange,
+  onTextConfirm,
+  onTextCancel,
 }) => {
   const filterValue = rawFilterValue?.trim();
   const keywords = filterValue?.toLowerCase().split(/\s+/g) ?? [];
@@ -32,12 +40,14 @@ export const Column: React.VFC<Props> = ({
   );
   const totalCount = rawCards.length;
 
-  const [text, setText] = useState('');
-
   const [inputMode, setInputMode] = useState(false);
   const toggleInput = () => setInputMode(v => !v);
-  const confirmInput = () => setText('');
-  const cancelInput = () => setInputMode(false);
+  const confirmInput = () => {
+    onTextConfirm?.();
+  };
+  const cancelInput = () => {
+    onTextCancel?.();
+  };
 
   const [draggingCardID, setDraggingCardID] = useState<string | undefined>(
     undefined,
@@ -60,7 +70,7 @@ export const Column: React.VFC<Props> = ({
       {inputMode && (
         <InputForm
           value={text}
-          onChange={setText}
+          onChange={onTextChange}
           onConfirm={confirmInput}
           onCancel={cancelInput}
         />

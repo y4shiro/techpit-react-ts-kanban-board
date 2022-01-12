@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import produce from 'immer';
 
+import { randomID } from './utils';
 import { Header as _Header } from './Header';
 import { Column } from './Column';
 import { DeleteDialog } from './DeleteDialog';
@@ -13,6 +14,7 @@ export const App: React.VFC = () => {
     {
       id: 'A',
       title: 'TODO',
+      text: '',
       cards: [
         { id: 'a', text: '朝食をとる🍞' },
         { id: 'b', text: 'SNSをチェックする🐦' },
@@ -22,6 +24,7 @@ export const App: React.VFC = () => {
     {
       id: 'B',
       title: 'Doing',
+      text: '',
       cards: [
         { id: 'd', text: '顔を洗う👐' },
         { id: 'e', text: '歯を磨く🦷' },
@@ -30,11 +33,13 @@ export const App: React.VFC = () => {
     {
       id: 'C',
       title: 'Waiting',
+      text: '',
       cards: [],
     },
     {
       id: 'D',
       title: 'Done',
+      text: '',
       cards: [{ id: 'f', text: '布団から出る (:3っ)っ -=三[＿＿]' }],
     },
   ]);
@@ -80,6 +85,36 @@ export const App: React.VFC = () => {
     );
   };
 
+  const setText = (columnID: string, value: string) => {
+    type Column = typeof columns;
+    setColumns(
+      produce((columns: Column) => {
+        const column = columns.find(c => c.id === columnID);
+        if (!column) return;
+
+        column.text = value;
+      }),
+    );
+  };
+
+  const addCard = (columnID: string) => {
+    const cardID = randomID();
+
+    type Columns = typeof columns;
+    setColumns(
+      produce((columns: Columns) => {
+        const column = columns.find(c => c.id === columnID);
+        if (!column) return;
+
+        column.cards.unshift({
+          id: cardID,
+          text: column.text,
+        });
+        column.text = '';
+      }),
+    );
+  };
+
   const [deletingCardID, setDeletingCardID] = useState<string | undefined>(
     undefined,
   );
@@ -110,7 +145,7 @@ export const App: React.VFC = () => {
 
       <MainArea>
         <HorizontalScroll>
-          {columns.map(({ id: columnID, title, cards }) => (
+          {columns.map(({ id: columnID, title, cards, text }) => (
             <Column
               key={columnID}
               title={title}
@@ -119,6 +154,9 @@ export const App: React.VFC = () => {
               onCardDragStart={cardID => setDraggingCardID(cardID)}
               onCardDrop={entered => dropCardTo(entered ?? columnID)}
               onCardDeleteClick={cardID => setDeletingCardID(cardID)}
+              text={text}
+              onTextChange={value => setText(columnID, value)}
+              onTextConfirm={() => addCard(columnID)}
             />
           ))}
         </HorizontalScroll>
