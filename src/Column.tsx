@@ -55,7 +55,9 @@ export const Column: React.VFC<Props> = ({
 
       <VerticalScroll>
         {cards.map(({ id, text }) => (
-          <Card key={id} text={text} />
+          <Card.DropArea key={id}>
+            <Card text={text} />
+          </Card.DropArea>
         ))}
       </VerticalScroll>
     </Container>
