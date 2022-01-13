@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import { useDispatch, useSelector } from 'react-redux';
 import produce from 'immer';
 
 import { randomID, sortBy, reorderPatch } from './utils';
 import { api, ColumnID, CardID } from './api';
+import { State as RootState, Action } from './reducer';
 import { Header as _Header } from './Header';
 import { Column } from './Column';
 import { DeleteDialog } from './DeleteDialog';
@@ -23,7 +25,16 @@ type State = {
 };
 
 export const App: React.VFC = () => {
-  const [filterValue, setFilterValue] = useState('');
+  const dispatch = useDispatch();
+  const filterValue = useSelector((state: RootState) => state.filterValue);
+  const setFilterValue = (value: string) =>
+    dispatch<Action>({
+      type: 'Filter.SetFilter',
+      payload: {
+        value,
+      },
+    });
+
   const [{ columns, cardsOrder }, setData] = useState<State>({
     cardsOrder: {},
   });
