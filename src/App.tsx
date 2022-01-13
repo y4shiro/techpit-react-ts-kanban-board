@@ -80,6 +80,8 @@ export const App: React.VFC = () => {
         });
       }),
     );
+
+    api('PATCH /v1/cardsOrder', patch);
   };
 
   const setText = (columnID: string, value: string) => {
