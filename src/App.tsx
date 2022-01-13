@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import produce from 'immer';
 
-import { randomID, sortBy } from './utils';
+import { randomID, sortBy, reorderPatch } from './utils';
 import { api } from './api';
 import { Header as _Header } from './Header';
 import { Column } from './Column';
@@ -24,7 +24,9 @@ type State = {
 
 export const App: React.VFC = () => {
   const [filterValue, setFilterValue] = useState('');
-  const [{ columns }, setData] = useState<State>({ cardsOrder: {} });
+  const [{ columns, cardsOrder }, setData] = useState<State>({
+    cardsOrder: {},
+  });
 
   useEffect(() => {
     (async () => {
@@ -63,30 +65,19 @@ export const App: React.VFC = () => {
 
     if (fromID === toID) return;
 
+    const patch = reorderPatch(cardsOrder, fromID, toID);
+
     setData(
       produce((draft: State) => {
-        const card = draft.columns
-          ?.flatMap(col => col.cards ?? [])
-          .find(c => c.id === fromID);
-        if (!card) return columns;
+        draft.cardsOrder = {
+          ...draft.cardsOrder,
+          ...patch,
+        };
 
-        const fromColumn = draft.columns?.find(col =>
-          col.cards?.some(c => c.id === fromID),
-        );
-        if (!fromColumn?.cards) return;
-
-        fromColumn.cards = fromColumn.cards.filter(c => c.id !== fromID);
-
-        const toColumn = draft.columns?.find(
-          col => col.id === toID || col.cards?.some(c => c.id === toID),
-        );
-        if (!toColumn?.cards) return;
-
-        let index = toColumn.cards.findIndex(c => c.id === toID);
-        if (index < 0) {
-          index = toColumn.cards.length;
-        }
-        toColumn.cards.splice(index, 0, card);
+        const unorderedCards = draft.columns?.flatMap(c => c.cards ?? []) ?? [];
+        draft.columns?.forEach(column => {
+          column.cards = sortBy(unorderedCards, draft.cardsOrder, column.id);
+        });
       }),
     );
   };
