@@ -102,20 +102,28 @@ export const App: React.VFC = () => {
     const text = column.text;
     const cardID = randomID();
 
+    const patch = reorderPatch(cardsOrder, cardID, cardsOrder[columnID]);
+
     setData(
       produce((draft: State) => {
         const column = draft.columns?.find(c => c.id === columnID);
-        if (!column) return;
+        if (!column?.cards) return;
 
-        column.cards?.unshift({
+        column.cards.unshift({
           id: cardID,
           text: column.text,
         });
         column.text = '';
+
+        draft.cardsOrder = {
+          ...draft.cardsOrder,
+          ...patch,
+        };
       }),
     );
 
     api('POST /v1/cards', { id: cardID, text });
+    api('PATCH /v1/cardsOrder', patch);
   };
 
   const [deletingCardID, setDeletingCardID] = useState<string | undefined>(
