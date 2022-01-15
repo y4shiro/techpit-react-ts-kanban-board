@@ -1,19 +1,43 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useDispatch, useSelector } from 'react-redux';
+
+import { reorderPatch } from './utils';
+import { api } from './api';
+
 import * as color from './color';
 import { Button, DangerButton } from './Button';
 
 type Props = {
-  onConfirm?: () => void;
-  onCancel?: () => void;
   className?: string;
 };
 
-export const DeleteDialog: React.VFC<Props> = ({
-  onConfirm,
-  onCancel,
-  className,
-}) => {
+export const DeleteDialog: React.VFC<Props> = ({ className }) => {
+  const dispatch = useDispatch();
+  const deletingCardID = useSelector(state => state.deletingCardID);
+  const cardsOrder = useSelector(state => state.cardsOrder);
+
+  const onConfirm = () => {
+    const cardID = deletingCardID;
+    if (!cardID) return;
+
+    dispatch({
+      type: 'Dialog.ConfirmDelete',
+    });
+
+    api('DELETE /v1/cards', {
+      id: cardID,
+    });
+
+    const patch = reorderPatch(cardsOrder, cardID);
+    api('PATCH /v1/cardsOrder', patch);
+  };
+
+  const onCancel = () =>
+    dispatch({
+      type: 'Dialog.CancelDelete',
+    });
+
   return (
     <Container className={className}>
       <Message>Are you sure to delete?</Message>

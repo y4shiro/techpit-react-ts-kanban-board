@@ -39,6 +39,21 @@ export const App: React.VFC = () => {
   // ビルドを通すためだけのスタブ実装なので、後ほど修正する
   const setData = fn => fn({ cardsOrder: {} });
 
+  const cardIsBeingDeleted = useSelector(state =>
+    Boolean(state.deletingCardID),
+  );
+  const setDeletingCardID = (cardID: CardID) =>
+    dispatch({
+      type: 'Card.SetDeletingCard',
+      payload: {
+        cardID,
+      },
+    });
+  const cancelDelete = () =>
+    dispatch({
+      type: 'Dialog.CancelDelete',
+    });
+
   useEffect(() => {
     (async () => {
       const columns = await api('GET /v1/columns', null);
@@ -144,39 +159,6 @@ export const App: React.VFC = () => {
     api('PATCH /v1/cardsOrder', patch);
   };
 
-  const [deletingCardID, setDeletingCardID] = useState<CardID | undefined>(
-    undefined,
-  );
-
-  const deleteCard = () => {
-    const cardID = deletingCardID;
-    if (!cardID) return;
-
-    setDeletingCardID(undefined);
-
-    const patch = reorderPatch(cardsOrder, cardID);
-
-    setData(
-      produce((draft: State) => {
-        const column = draft.columns?.find(col =>
-          col.cards?.some(c => c.id === cardID),
-        );
-
-        if (!column?.cards) return;
-
-        column.cards = column.cards.filter(c => c.id !== cardID);
-
-        draft.cardsOrder = {
-          ...draft.cardsOrder,
-          ...patch,
-        };
-      }),
-    );
-
-    api('DELETE /v1/cards', { id: cardID });
-    api('PATCH /v1/cardsOrder', patch);
-  };
-
   return (
     <Container>
       <Header filterValue={filterValue} onFilterChange={setFilterValue} />
@@ -204,12 +186,9 @@ export const App: React.VFC = () => {
         </HorizontalScroll>
       </MainArea>
 
-      {deletingCardID && (
-        <Overlay onClick={() => setDeletingCardID(undefined)}>
-          <DeleteDialog
-            onConfirm={deleteCard}
-            onCancel={() => setDeletingCardID(undefined)}
-          />
+      {cardIsBeingDeleted && (
+        <Overlay onClick={cancelDelete}>
+          <DeleteDialog />
         </Overlay>
       )}
     </Container>
