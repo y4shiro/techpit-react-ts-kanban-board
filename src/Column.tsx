@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import { useSelector } from 'react-redux';
 import * as color from './color';
 import { Card } from './Card';
 import { PlusIcon } from './icon';
@@ -8,7 +9,6 @@ import { CardID } from './api';
 
 type Props = {
   title?: string;
-  filterValue?: string;
   cards?: {
     id: CardID;
     text?: string;
@@ -24,7 +24,6 @@ type Props = {
 
 export const Column: React.VFC<Props> = ({
   title,
-  filterValue: rawFilterValue,
   cards: rawCards,
   onCardDragStart,
   onCardDrop,
@@ -34,8 +33,9 @@ export const Column: React.VFC<Props> = ({
   onTextConfirm,
   onTextCancel,
 }) => {
-  const filterValue = rawFilterValue?.trim();
-  const keywords = filterValue?.toLowerCase().split(/\s+/g) ?? [];
+  const filterValue = useSelector(state => state.filterValue.trim());
+  const keywords = filterValue.toLowerCase().split(/\s+/g) ?? [];
+
   const cards = rawCards?.filter(({ text }) =>
     keywords?.every(w => text?.toLowerCase().includes(w)),
   );

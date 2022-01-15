@@ -5,20 +5,14 @@ import { CardFilter } from './CardFilter';
 
 type Props = {
   className?: string;
-  filterValue?: string;
-  onFilterChange?: (value: string) => void;
 };
 
-export const Header: React.VFC<Props> = ({
-  className,
-  filterValue,
-  onFilterChange,
-}) => {
+export const Header: React.VFC<Props> = ({ className }) => {
   return (
     <Container className={className}>
       <Logo>Kanban board</Logo>
 
-      <CardFilter value={filterValue} onChange={onFilterChange} />
+      <CardFilter />
     </Container>
   );
 };

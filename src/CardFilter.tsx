@@ -1,26 +1,27 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useDispatch, useSelector } from 'react-redux';
 import * as color from './color';
 import { SearchIcon as _SearchIcon } from './icon';
 
-type Props = {
-  className?: string;
-  value?: string;
-  onChange?: (value: string) => void;
-};
+export const CardFilter: React.VFC = () => {
+  const dispatch = useDispatch();
+  const value = useSelector(state => state.filterValue);
+  const onChange = (value: string) =>
+    dispatch({
+      type: 'Filter.SetFilter',
+      payload: {
+        value,
+      },
+    });
 
-export const CardFilter: React.VFC<Props> = ({
-  className,
-  value,
-  onChange,
-}) => {
   return (
     <Container>
       <SearchIcon />
       <Input
         placeholder="Filter cards"
         value={value}
-        onChange={ev => onChange?.(ev.currentTarget.value)}
+        onChange={ev => onChange(ev.currentTarget.value)}
       />
     </Container>
   );

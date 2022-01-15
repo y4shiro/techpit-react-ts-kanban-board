@@ -11,14 +11,6 @@ import { Overlay as _Overlay } from './Overlay';
 
 export const App: React.VFC = () => {
   const dispatch = useDispatch();
-  const filterValue = useSelector(state => state.filterValue);
-  const setFilterValue = (value: string) =>
-    dispatch({
-      type: 'Filter.SetFilter',
-      payload: {
-        value,
-      },
-    });
 
   const columns = useSelector(state => state.columns);
   const cardsOrder = useSelector(state => state.cardsOrder);
@@ -126,7 +118,7 @@ export const App: React.VFC = () => {
 
   return (
     <Container>
-      <Header filterValue={filterValue} onFilterChange={setFilterValue} />
+      <Header />
 
       <MainArea>
         <HorizontalScroll>
@@ -137,7 +129,6 @@ export const App: React.VFC = () => {
               <Column
                 key={columnID}
                 title={title}
-                filterValue={filterValue}
                 cards={cards}
                 onCardDragStart={cardID => setDraggingCardID(cardID)}
                 onCardDrop={entered => dropCardTo(entered ?? columnID)}
