@@ -20,7 +20,7 @@ type State = {
       text?: string;
     }[];
   }[];
-  cardsOrder: Record<string, CardID | ColumnID>;
+  cardsOrder: Record<string, CardID | ColumnID | null>;
 };
 
 export const App: React.VFC = () => {
@@ -34,18 +34,18 @@ export const App: React.VFC = () => {
       },
     });
 
-  const [{ columns, cardsOrder }, setData] = useState<State>({
-    cardsOrder: {},
-  });
+  const columns = useSelector(state => state.columns);
+  const cardsOrder = useSelector(state => state.cardsOrder);
+  // ビルドを通すためだけのスタブ実装なので、後ほど修正する
+  const setData = fn => fn({ cardsOrder: {} });
 
   useEffect(() => {
     (async () => {
       const columns = await api('GET /v1/columns', null);
-      setData(
-        produce((draft: State) => {
-          draft.columns = columns;
-        }),
-      );
+      dispatch({
+        type: 'App.SetColumns',
+        payload: { columns },
+      });
 
       const [unorderedCards, cardsOrder] = await Promise.all([
         api('GET /v1/cards', null),
@@ -60,8 +60,16 @@ export const App: React.VFC = () => {
           });
         }),
       );
+
+      dispatch({
+        type: 'App.SetCards',
+        payload: {
+          cards: unorderedCards,
+          cardsOrder,
+        },
+      });
     })();
-  }, []);
+  }, [dispatch]);
 
   const [draggingCardID, setDraggingCardID] = useState<CardID | undefined>(
     undefined,
