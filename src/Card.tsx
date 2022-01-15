@@ -1,30 +1,51 @@
 import React, { useState, useRef } from 'react';
 import styled from 'styled-components';
+import { useDispatch, useSelector } from 'react-redux';
+import { CardID } from './api';
 import * as color from './color';
 import { CheckIcon as _CheckIcon, TrashIcon } from './icon';
 
 type Props = {
-  text?: string;
-  onDragStart?: () => void;
-  onDragEnd?: () => void;
-  onDeleteClick?: () => void;
+  id: CardID;
 };
 
 export const Card: React.VFC<Props> & {
   DropArea: React.VFC<DropAreaProp>;
-} = ({ text, onDragStart, onDragEnd, onDeleteClick }) => {
-  const [drag, setDrag] = useState(false);
+} = ({ id }) => {
+  const dispatch = useDispatch();
+  const card = useSelector(state =>
+    state.columns?.flatMap(c => c.cards ?? []).find(c => c.id === id),
+  );
+  const drag = useSelector(state => state.draggingCardID === id);
+
+  const onDeleteClick = () =>
+    dispatch({
+      type: 'Card.SetDeletingCard',
+      payload: {
+        cardID: id,
+      },
+    });
+
+  if (!card) {
+    return null;
+  }
+  const { text } = card;
 
   return (
     <Container
       style={{ opacity: drag ? 0.5 : undefined }}
       onDragStart={() => {
-        onDragStart?.();
-        setDrag(true);
+        dispatch({
+          type: 'Card.StartDragging',
+          payload: {
+            cardID: id,
+          },
+        });
       }}
       onDragEnd={() => {
-        onDragEnd?.();
-        setDrag(false);
+        dispatch({
+          type: 'Card.EndDragging',
+        });
       }}
     >
       <CheckIcon />
