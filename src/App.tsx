@@ -1,27 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
-import produce from 'immer';
 
-import { randomID, sortBy, reorderPatch } from './utils';
+import { randomID, reorderPatch } from './utils';
 import { api, ColumnID, CardID } from './api';
 import { Header as _Header } from './Header';
 import { Column } from './Column';
 import { DeleteDialog } from './DeleteDialog';
 import { Overlay as _Overlay } from './Overlay';
-
-type State = {
-  columns?: {
-    id: ColumnID;
-    title?: string;
-    text?: string;
-    cards?: {
-      id: CardID;
-      text?: string;
-    }[];
-  }[];
-  cardsOrder: Record<string, CardID | ColumnID | null>;
-};
 
 export const App: React.VFC = () => {
   const dispatch = useDispatch();
@@ -36,8 +22,6 @@ export const App: React.VFC = () => {
 
   const columns = useSelector(state => state.columns);
   const cardsOrder = useSelector(state => state.cardsOrder);
-  // ビルドを通すためだけのスタブ実装なので、後ほど修正する
-  const setData = fn => fn({ cardsOrder: {} });
 
   const cardIsBeingDeleted = useSelector(state =>
     Boolean(state.deletingCardID),
@@ -57,24 +41,18 @@ export const App: React.VFC = () => {
   useEffect(() => {
     (async () => {
       const columns = await api('GET /v1/columns', null);
+
       dispatch({
         type: 'App.SetColumns',
-        payload: { columns },
+        payload: {
+          columns,
+        },
       });
 
       const [unorderedCards, cardsOrder] = await Promise.all([
         api('GET /v1/cards', null),
         api('GET /v1/cardsOrder', null),
       ]);
-
-      setData(
-        produce((draft: State) => {
-          draft.cardsOrder = cardsOrder;
-          draft.columns?.forEach(column => {
-            column.cards = sortBy(unorderedCards, cardsOrder, column.id);
-          });
-        }),
-      );
 
       dispatch({
         type: 'App.SetCards',
@@ -98,7 +76,6 @@ export const App: React.VFC = () => {
   const dropCardTo = (toID: CardID | ColumnID) => {
     const fromID = draggingCardID;
     if (!fromID) return;
-
     if (fromID === toID) return;
 
     const patch = reorderPatch(cardsOrder, fromID, toID);
@@ -114,14 +91,13 @@ export const App: React.VFC = () => {
   };
 
   const setText = (columnID: ColumnID, value: string) => {
-    setData(
-      produce((draft: State) => {
-        const column = draft.columns?.find(c => c.id === columnID);
-        if (!column) return;
-
-        column.text = value;
-      }),
-    );
+    dispatch({
+      type: 'InputForm.SetText',
+      payload: {
+        columnID,
+        value,
+      },
+    });
   };
 
   const addCard = (columnID: ColumnID) => {
@@ -133,25 +109,18 @@ export const App: React.VFC = () => {
 
     const patch = reorderPatch(cardsOrder, cardID, cardsOrder[columnID]);
 
-    setData(
-      produce((draft: State) => {
-        const column = draft.columns?.find(c => c.id === columnID);
-        if (!column?.cards) return;
+    dispatch({
+      type: 'InputForm.ConfirmInput',
+      payload: {
+        columnID,
+        cardID,
+      },
+    });
 
-        column.cards.unshift({
-          id: cardID,
-          text: column.text,
-        });
-        column.text = '';
-
-        draft.cardsOrder = {
-          ...draft.cardsOrder,
-          ...patch,
-        };
-      }),
-    );
-
-    api('POST /v1/cards', { id: cardID, text });
+    api('POST /v1/cards', {
+      id: cardID,
+      text,
+    });
     api('PATCH /v1/cardsOrder', patch);
   };
 
