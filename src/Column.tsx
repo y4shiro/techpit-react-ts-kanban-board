@@ -14,9 +14,6 @@ type Props = {
     id: CardID;
     text?: string;
   }[];
-  text?: string;
-  onTextChange?: (value: string) => void;
-  onTextConfirm?: () => void;
   onTextCancel?: () => void;
 };
 
@@ -24,9 +21,6 @@ export const Column: React.VFC<Props> = ({
   id: columnID,
   title,
   cards: rawCards,
-  text,
-  onTextChange,
-  onTextConfirm,
   onTextCancel,
 }) => {
   const filterValue = useSelector(state => state.filterValue.trim());
@@ -39,9 +33,6 @@ export const Column: React.VFC<Props> = ({
 
   const [inputMode, setInputMode] = useState(false);
   const toggleInput = () => setInputMode(v => !v);
-  const confirmInput = () => {
-    onTextConfirm?.();
-  };
   const cancelInput = () => {
     onTextCancel?.();
   };
@@ -57,14 +48,7 @@ export const Column: React.VFC<Props> = ({
         <AddButton onClick={toggleInput} />
       </Header>
 
-      {inputMode && (
-        <InputForm
-          value={text}
-          onChange={onTextChange}
-          onConfirm={confirmInput}
-          onCancel={cancelInput}
-        />
-      )}
+      {inputMode && <InputForm columnID={columnID} onCancel={cancelInput} />}
 
       {!cards ? (
         <Loading />
