@@ -49,25 +49,6 @@ export const App: React.VFC = () => {
     })();
   }, [dispatch]);
 
-  const draggingCardID = useSelector(state => state.draggingCardID);
-
-  const dropCardTo = (toID: CardID | ColumnID) => {
-    const fromID = draggingCardID;
-    if (!fromID) return;
-    if (fromID === toID) return;
-
-    const patch = reorderPatch(cardsOrder, fromID, toID);
-
-    dispatch({
-      type: 'Card.Drop',
-      payload: {
-        toID,
-      },
-    });
-
-    api('PATCH /v1/cardsOrder', patch);
-  };
-
   const setText = (columnID: ColumnID, value: string) => {
     dispatch({
       type: 'InputForm.SetText',
@@ -114,9 +95,9 @@ export const App: React.VFC = () => {
             columns.map(({ id: columnID, title, cards, text }) => (
               <Column
                 key={columnID}
+                id={columnID}
                 title={title}
                 cards={cards}
-                onCardDrop={entered => dropCardTo(entered ?? columnID)}
                 text={text}
                 onTextChange={value => setText(columnID, value)}
                 onTextConfirm={() => addCard(columnID)}

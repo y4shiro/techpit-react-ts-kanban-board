@@ -1,7 +1,8 @@
 import React, { useState, useRef } from 'react';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
-import { CardID } from './api';
+import { reorderPatch } from './utils';
+import { api, ColumnID, CardID } from './api';
 import * as color from './color';
 import { CheckIcon as _CheckIcon, TrashIcon } from './icon';
 
@@ -117,20 +118,24 @@ const Link = styled.a.attrs({
 `;
 
 type DropAreaProp = {
+  targetID: CardID | ColumnID;
   disabled?: boolean;
-  onDrop?: () => void;
   children?: React.ReactNode;
   className?: string;
   style?: React.CSSProperties;
 };
 
 const DropArea: React.VFC<DropAreaProp> = ({
+  targetID: toID,
   disabled,
-  onDrop,
   children,
   className,
   style,
 }) => {
+  const dispatch = useDispatch();
+  const draggingCardID = useSelector(state => state.draggingCardID);
+  const cardsOrder = useSelector(state => state.cardsOrder);
+
   const [isTarget, setIsTarget] = useState(false);
   const visible = !disabled && isTarget;
 
@@ -151,8 +156,19 @@ const DropArea: React.VFC<DropAreaProp> = ({
       }}
       onDrop={() => {
         if (disabled) return;
+        if (!draggingCardID || draggingCardID === toID) return;
+
+        dispatch({
+          type: 'Card.Drop',
+          payload: {
+            toID,
+          },
+        });
+
+        const patch = reorderPatch(cardsOrder, draggingCardID, toID);
+        api('PATCH /v1/cardsOrder', patch);
+
         setIsTarget(false);
-        onDrop?.();
       }}
     >
       <DropAreaIndicator

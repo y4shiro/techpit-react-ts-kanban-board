@@ -5,15 +5,15 @@ import * as color from './color';
 import { Card } from './Card';
 import { PlusIcon } from './icon';
 import { InputForm as _InputForm } from './InputForm';
-import { CardID } from './api';
+import { CardID, ColumnID } from './api';
 
 type Props = {
+  id: ColumnID;
   title?: string;
   cards?: {
     id: CardID;
     text?: string;
   }[];
-  onCardDrop?: (entered: CardID | null) => void;
   text?: string;
   onTextChange?: (value: string) => void;
   onTextConfirm?: () => void;
@@ -21,9 +21,9 @@ type Props = {
 };
 
 export const Column: React.VFC<Props> = ({
+  id: columnID,
   title,
   cards: rawCards,
-  onCardDrop,
   text,
   onTextChange,
   onTextConfirm,
@@ -76,23 +76,23 @@ export const Column: React.VFC<Props> = ({
             {cards.map(({ id }, i) => (
               <Card.DropArea
                 key={id}
+                targetID={id}
                 disabled={
                   draggingCardID !== undefined &&
                   (id === draggingCardID || cards[i - 1]?.id === draggingCardID)
                 }
-                onDrop={() => onCardDrop?.(id)}
               >
                 <Card id={id} />
               </Card.DropArea>
             ))}
 
             <Card.DropArea
+              targetID={columnID}
               style={{ height: '100%' }}
               disabled={
                 draggingCardID !== undefined &&
                 cards[cards.length - 1]?.id === draggingCardID
               }
-              onDrop={() => onCardDrop?.(null)}
             />
           </VerticalScroll>
         </>
