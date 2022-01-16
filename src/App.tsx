@@ -12,14 +12,6 @@ export const App: React.VFC = () => {
   const dispatch = useDispatch();
   const columns = useSelector(state => state.columns);
 
-  const cardIsBeingDeleted = useSelector(state =>
-    Boolean(state.deletingCardID),
-  );
-  const cancelDelete = () =>
-    dispatch({
-      type: 'Dialog.CancelDelete',
-    });
-
   useEffect(() => {
     (async () => {
       const columns = await api('GET /v1/columns', null);
@@ -60,11 +52,7 @@ export const App: React.VFC = () => {
         </HorizontalScroll>
       </MainArea>
 
-      {cardIsBeingDeleted && (
-        <Overlay onClick={cancelDelete}>
-          <DeleteDialog />
-        </Overlay>
-      )}
+      <DialogOverlay />
     </Container>
   );
 };
@@ -106,6 +94,28 @@ const HorizontalScroll = styled.div`
 const Loading = styled.div.attrs({ children: 'Loading...' })`
   font-size: 14px;
 `;
+
+const DialogOverlay: React.VFC = () => {
+  const dispatch = useDispatch();
+  const cardIsBeingDeleted = useSelector(state =>
+    Boolean(state.deletingCardID),
+  );
+
+  const cancelDelete = () =>
+    dispatch({
+      type: 'Dialog.CancelDelete',
+    });
+
+  if (!cardIsBeingDeleted) {
+    return null;
+  }
+
+  return (
+    <Overlay onClick={cancelDelete}>
+      <DeleteDialog />
+    </Overlay>
+  );
+};
 
 const Overlay = styled(_Overlay)`
   display: flex;
