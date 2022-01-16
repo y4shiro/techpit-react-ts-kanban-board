@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 
 import { api } from './api';
 import { Header as _Header } from './Header';
@@ -10,7 +10,10 @@ import { Overlay as _Overlay } from './Overlay';
 
 export const App: React.VFC = () => {
   const dispatch = useDispatch();
-  const columns = useSelector(state => state.columns);
+  const columns = useSelector(
+    state => state.columns?.map(v => v.id),
+    shallowEqual,
+  );
 
   useEffect(() => {
     (async () => {
@@ -47,7 +50,7 @@ export const App: React.VFC = () => {
           {!columns ? (
             <Loading />
           ) : (
-            columns.map(({ id }) => <Column key={id} id={id} />)
+            columns.map(id => <Column key={id} id={id} />)
           )}
         </HorizontalScroll>
       </MainArea>
